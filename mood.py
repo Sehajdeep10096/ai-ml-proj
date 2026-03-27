@@ -76,3 +76,33 @@ def pred_mood(sleep, screen, stress, study, brk):
     pred_num = model.predict(dfe)[0]
     mood = ler.inverse_transform([pred_num])[0]
     return mood
+
+# MAIN PROGRAM
+
+def Main():
+    print("-:Study Mood Classifier:-")
+
+    create_dataset()
+    train_model()
+
+    print("Enter details below (Only in numbers):")
+
+    sleep = int(input("Hours of sleep (2-9): "))
+    screen = int(input("Screen time(in hours) (1-10): "))
+    stress = int(input("Stress level (1-5): "))
+    study = int(input("Study time(in hours) (0-6): "))
+    brk = int(input("Breaks taken between study (0-6): "))
+
+    mood = pred_mood(sleep, screen, stress, study, brk)
+
+    print("Predicted Study Mood:", mood)
+
+    if (mood == "Focused"):
+        print("Good routine! Keep it up.")
+    elif(mood == "Distracted"):
+        print("Try reducing interruptions and stay focused.")
+    else:
+        print("You look stressed. Consider taking breaks and decrease screen time.")
+
+# Calling the main function
+Main()
