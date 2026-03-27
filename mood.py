@@ -37,3 +37,42 @@ def create_dataset():
 
     df.to_csv("dataset.csv", index=False)
     print("Dataset created (dataset.csv).")
+
+
+# STEP 2: Training the model
+
+def train_model():
+    data = pnd.read_csv("dataset.csv")
+
+    ler = LabelEncoder()
+    data["mood"] = ler.fit_transform(data["mood"])
+
+    X = data.drop("mood", axis=1)
+    y = data["mood"]
+
+    x_train, x_test, y_train, y_test = train_test_split(
+        X, y, test_size=0.2, random_state=8
+    )
+
+    model = DecisionTreeClassifier()
+    model.fit(x_train, y_train)
+    pkl.dump(model, open("model.pkl", "wb"))
+    pkl.dump(ler, open("label_encoder.pkl", "wb"))
+
+def pred_mood(sleep, screen, stress, study, brk):
+    model = pkl.load(open("model.pkl","rb" ) )
+    
+    ler = pkl.load(open("label_encoder.pkl", "rb"))
+
+    # Create a DataFrame with correct column names
+    dfe = pnd.DataFrame([{
+        "sleep_hours": sleep,
+        "screen_time": screen,
+        "stress": stress,
+        "study_time": study,
+        "breaks": brk
+    }])
+
+    pred_num = model.predict(dfe)[0]
+    mood = ler.inverse_transform([pred_num])[0]
+    return mood
